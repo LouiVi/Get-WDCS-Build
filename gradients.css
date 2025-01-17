@@ -1,0 +1,14 @@
+body
+{
+
+}
+.greenGradient {
+	background: linear-gradient(to bottom,  rgba(180,227,145,1) 0%,rgba(97,196,25,1) 50%,rgba(180,227,145,1) 100%);
+	height: 24px;
+	vertical-align: middle;
+}
+.redGradient {
+	background: linear-gradient(to bottom,  rgba(227,145,157,1) 0%,rgba(197,25,48,1) 50%,rgba(227,145,157,1) 100%);
+  height: 24px;
+	vertical-align: middle;
+}
