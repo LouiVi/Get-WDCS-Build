@@ -1,5 +1,7 @@
-cfg.Lsndscape;
+cfg.Landscape;
+
 app.WriteFile( "Builds.txt","","Write");
+app.DeleteFile( "Builds.txt" );
 var wdcs = new Array();
 wdcs = ['https://qa.devzone.multisystems.com','https://ambientemoderno.wdcsapp.com'  ,'https://basebda.wdcsapp.com'  ,'https://cblbahama.wdcsapp.com'  ,'https://ct.wdcsapp.com'  ,'https://distvazquez.wdcsapp.com'  ,'https://farmaciasaliadas.wdcsapp.com'  ,'https://freije.wdcsapp.com'  ,'https://mipad.wdcsapp.com'  ,'https://mocoroa.wdcsapp.com'  ,'https://especiasmontero.wdcsapp.com'  ,'https://speedster.wdcsapp.com'  ,'https://surgical.wdcsapp.com']
 current="";
@@ -14,18 +16,17 @@ function formatDateToShort(date) {
 
 async function OnStart()
 {
-app.SetOrientation( "Landscape" );
+	app.SetOrientation( "Landscape" );
 	lay = app.CreateLayout( "Linear", "VCenter,FillXY" )
-
 	web = app.CreateWebView( 0, 0, "IgnoreErrors, IgnoreSSLErrors" );
 	web.SetOnProgress( web_Progress );
 	lay.AddChild( web );
-	
 	webLog= app.CreateWebView( 1, 1, "IgnoreErrors, IgnoreSSLErrors" );
 	lay.AddChild( webLog );
-	
 	app.AddLayout( lay )
 	await ParseBuilds();
+		
+	
 	 /*var packageName = "com.microsoft.office.outlook";
     var className = "com.microsoft.office.outlook.ui";
     var action = "android.intent.action.VIEW";
@@ -41,7 +42,6 @@ app.SetOrientation( "Landscape" );
     extras = JSON.stringify( extras )
 
     app.SendIntent( packageName, className, action, category, uri, type, extras ) */
-    app.ShowPopup("Done");
 }
 
 async function web_Progress(progress) {
@@ -85,13 +85,21 @@ commit = parseInt(res[4]);
 release = createDateFromString("01/01/"+year, day);
 r = result.split(", ")[1].split(".")[1];
 if(r == app.ReadFile( "CurrentBuild.txt" )) {
-line = "<tr style='background-color: green'><td>" + release + "</td><td>" + wdcs[d] + "</td><td>" + result + "</td><td>" + getCurrentTimeStandard() + "</td></tr>";
+line = "<tr class='greenGradient'><td align='center'>" + release + "</td><td>" + wdcs[d] + "</td><td>" + result + "</td><td>" + getCurrentTimeStandard() + "</td></tr>";
 }else{
-line = "<tr style='background-color: red'><td>" + release + "</td><td>" + wdcs[d] + "</td><td>" + result + "</td><td>" + getCurrentTimeStandard() + "</td></tr>";
+line = "<tr class='redGradient'><td align='center'>" + release + "</td><td>" + wdcs[d] + "</td><td>" + result + "</td><td>" + getCurrentTimeStandard() + "</td></tr>";
 }
 	await app.WriteFile( "Builds.txt", line + "\r\n", "append");//result+", "+wdcs[d]+"\r\n", "Append" );
-	d+=1;
-	await webLog.LoadHtml( "<table width='100%' cellspacing='0' style='font-size: 14px;text-shadow: 1px 1px 2px #333333;color: #ffffff;white-space:nowrap;'  border='1'>" + app.ReadFile( "Builds.txt" )+"</table>");//.split(",").join("<br/>")+"<hr>" );
+d+=1;
+contents = "<style>" + app.ReadFile("gradients.css") + "</style><table width='100%' cellspacing='0' style='font-size: 14px;text-shadow: 1px 1px 2px #333333;color: #ffffff;white-space:nowrap;'  border='1'>" + app.ReadFile( "Builds.txt" )+"</table>";
+//alert(d)
+//alert(wdcs.length)
+	if(d==wdcs.length-1){
+	app.WriteFile( "report.html", contents );
+	app.SendFile( "report.html", "Reporte de WDCS Site Builds", contents );
+	
+	}
+	await webLog.LoadHtml(contents );//.split(",").join("<br/>")+"<hr>" );
 }
 
 async function ParseBuilds() {
